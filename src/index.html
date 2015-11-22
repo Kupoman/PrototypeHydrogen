@@ -127,10 +127,10 @@
             else if (mech.core === 'water') {
                 clone.querySelector('.mechcore').className += ' glyphicon glyphicon-tint';
             }
-            clone.querySelector('.mechhealth').style = 'width: ' + (mech.hp_current * 100 / mech.hp_max) + '%';
+            $(clone.querySelector('.mechhealth')).css('width', (mech.hp_current * 100 / mech.hp_max) + '%');
             clone.querySelector('.mechhealth').textContent = mech.hp_current + '/' + mech.hp_max;
             clone.querySelector('.mechweaponname').textContent = mech.weapon.name;
-            clone.querySelector('.mechweaponres').style = 'width: ' + (mech.weapon.resource_current * 100 / mech.weapon.resource_max) + '%';
+            $(clone.querySelector('.mechweaponres')).css('width', (mech.weapon.resource_current * 100 / mech.weapon.resource_max) + '%');
             clone.querySelector('.mechweaponres').textContent = mech.weapon.resource_current + '/' + mech.weapon.resource_max;
             clone.querySelector('.mechstatattack').textContent = mech.stats.attack + '(+0)';
             clone.querySelector('.mechstataccuracy').textContent = mech.stats.accuracy + '(+0)';
