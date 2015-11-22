@@ -119,6 +119,11 @@
             $(mechid + ' .mechstataccuracy').text(mech.stats.accuracy + '(+0)')
             $(mechid + ' .mechstatdefense').text(mech.stats.defense + '(+0)')
             $(mechid + ' .mechstatspeed').text(mech.stats.speed + '(+0)')
+
+            if (mech.hp_current <= 0) {
+                $(mechid).removeClass('panel-default')
+                $(mechid).addClass('panel-danger')
+            }
         }
 
         add_mech = function (mech) {
