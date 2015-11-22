@@ -47,6 +47,13 @@
             </div>
         </div>
     </template>
+
+    <template id="enemypic">
+        <div class="enemypic">
+            <img src="enemy.png">
+        </div>
+    </template>
+
     <div class="container-fluid">
         <div id="mechlist" class="row">
             <div class="panel panel-default col-sm-2 command-list">
@@ -137,6 +144,31 @@
 
             update_mech(mech)
         }
+
+        update_enemy = function (enemy) {
+            enemyid = '#en' + enemy.id
+
+            $(enemyid + ' img').css('left', enemy.left + '%')
+            $(enemyid + ' img').css('bottom', enemy.bottom + '%')
+
+            if (enemy.hp_current <= 0) {
+                console.log('remove ' + enemyid)
+                $(enemyid).remove()
+            }
+        }
+
+        add_enemy = function (enemy) {
+            var template,
+                clone
+
+            template = document.querySelector('#enemypic')
+            clone = document.importNode(template.content, true)
+            clone.querySelector('.enemypic').id = 'en' + enemy.id
+            document.body.appendChild(clone)
+
+            update_enemy(enemy)
+        }
     </script>
+
   </body>
 </html>

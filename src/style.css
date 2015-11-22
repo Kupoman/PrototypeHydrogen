@@ -19,6 +19,14 @@ body {
     width: 100%;
 }
 
+.enemypic>img {
+    width: 10%;
+    height: auto;
+    position: absolute;
+    left: 10%;
+    bottom: 60%;
+}
+
 /* Tweak Bootstrap */
 .panel {
     padding: 0;

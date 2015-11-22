@@ -7,6 +7,14 @@ Engine = {
     enemies: [],
     is_combat_over: false,
     last_mechid: 0,
+    enemy_positions: [
+        [0.05, 0.7],
+        [0.25, 0.6],
+        [0.45, 0.7],
+        [0.65, 0.6],
+        [0.85, 0.7]
+    ],
+
 
     load_mech_data: function (uri, is_player) {
         $.ajax({
@@ -24,8 +32,14 @@ Engine = {
                     add_mech(data)
                 }
                 else {
+                    var pos
+
                     data.name += data.id
+                    pos = Engine.enemy_positions[Engine.enemies.length]
+                    data.left = pos[0] * 100
+                    data.bottom = pos[1] * 100
                     Engine.enemies.push(data)
+                    add_enemy(data)
                 }
             },
             error: function (xhr, status, error) {
@@ -84,7 +98,12 @@ Engine = {
                     damage_mod = (combatant.stats.attack - 10) / 2
                     damage = damage_roll + damage_mod
                     target.hp_current = Math.max(target.hp_current - damage, 0)
-                    update_mech(target)
+                    if (target.is_player) {
+                        update_mech(target)
+                    }
+                    else {
+                        update_enemy(target)
+                    }
                     console.log(combatant.name + " attacks " + target.name + " for " + damage + " points of damage!")
                     if (target.hp_current == 0) {
                         console.log(target.name + " has fallen!")
