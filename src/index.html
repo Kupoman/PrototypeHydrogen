@@ -55,15 +55,15 @@
                 </div>
                 <div class="panel-body">
                     <ul class="nav nav-pills nav-stacked">
-                        <li><a href="#">Attack</a></li>
-                        <li><a href=#>Change Formation</a></li>
+                        <li><a href="do_attack">Attack</a></li>
+                        <li><a href="do_change_formation">Change Formation</a></li>
                         <!-- <li class="nav-divider"></li>
                         <li><a href="#">Formation Alpha</a></li>
                         <li><a href="#">Formation Beta</a></li>
                         <li><a href="#">Formation Gamma</a></li>
                         <li class="nav-divider"></li> -->
-                        <li><a href="#">Items</a></li>
-                        <li><a href="#">Run</a></li>
+                        <li><a href="do_items">Items</a></li>
+                        <li><a href="do_run"">Run</a></li>
                     </ul>
                 </div>
             </div>
@@ -77,6 +77,24 @@
     <script src="engine_stub.js"></script>
 
     <script>
+        do_attack = function () {
+            console.log("Start a round of combat!")
+        }
+
+        do_change_formation = function () {
+        }
+
+        do_items = function () {
+        }
+
+        do_run = function () {
+        }
+
+        $('.command-list a').click(function (evt) {
+            evt.preventDefault()
+            window[$(this).attr('href')]()
+        })
+
         add_mech = function (mech) {
             var template,
                 clone;
