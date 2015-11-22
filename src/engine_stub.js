@@ -41,7 +41,10 @@ Engine = {
         Engine.mechs.forEach(function (mech) {
             if (mech.weapon.resource_current > 0) {
                 mech.weapon.resource_current -= 1;
-                console.log(mech.name + " attacks!")
+				damage_roll = Math.floor((Math.random() * 6)+1)
+				damage_mod = (mech.stats.attack - 10) / 2
+				damage = damage_roll + damage_mod
+                console.log(mech.name + " attacks for " + damage + " points of damage!")
             }
             else {
                 console.log(mech.name + " is out of resources!")
