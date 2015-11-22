@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Prototype Hydrogen</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            margin-bottom: 33%;
+            width: 100%;
+            overflow: hidden;
+            background-image: url("background.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+
+        #mechlist {
+            position: absolute;
+            bottom: 0;
+            height: 33%;
+            width: 100%;
+        }
+    </style>
+  </head>
+  <body>
+    <template id="mechcard">
+        <div class="panel panel-default col-md-2">
+            <div class="panel-heading">
+                <h3>
+                    <span class="mechname"></span>
+                    <!-- <span class="mechcore"></span> -->
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="progress">
+                    <div class="mechhealth progress-bar progress-bar-danger" role="progressbar"></div>
+                </div>
+                <div class="media well well-sm">
+                    <div class="media-left">
+                        <div class="media-object">
+                            <h1 class="mechcore"></h1>
+                        </div>
+                    </div>
+                    <div class="media-body">
+                        <p class="mechweaponname"></p>
+                        <div class="progress">
+                            <div class="mechweaponres progress-bar" role="progressbar"></div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table">
+                    <tr>
+                        <td><span class="glyphicon glyphicon-cutlery"></span></td>
+                        <td class="mechstatattack"></td>
+
+                        <td><span class="glyphicon glyphicon-tower"></span></td>
+                        <td class="mechstatdefense"></td>
+                    </tr>
+                    <tr>
+                        <td><span class="glyphicon glyphicon-record"></span></td>
+                        <td class="mechstataccuracy"></td>
+
+                        <td><span class="glyphicon glyphicon-hourglass"></span></td>
+                        <td class="mechstatspeed"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </template>
+    <div class="container-fluid">
+        <div id="mechlist" class="row">
+            <div class="panel panel-default col-md-2 command-list">
+                <div class="panel-heading">
+                    <h1>Commands</h1>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="#">Attack</a></li>
+                        <li><a href=#>Change Formation</a></li>
+                        <!-- <li class="nav-divider"></li>
+                        <li><a href="#">Formation Alpha</a></li>
+                        <li><a href="#">Formation Beta</a></li>
+                        <li><a href="#">Formation Gamma</a></li>
+                        <li class="nav-divider"></li> -->
+                        <li><a href="#">Items</a></li>
+                        <li><a href="#">Run</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+
+    <script>
+        mechone = {
+            'name': 'Lynxshark',
+            'core': 'lightning',
+            'hp_current': 8,
+            'hp_max': 10,
+            'weapon': {
+                'name': 'Sword of Truth',
+                'resource_current': 2,
+                'resource_max': 4
+            },
+            'stats': {
+                'attack': 1,
+                'accuracy': 2,
+                'defense': 4,
+                'speed': 3
+            }
+        }
+        mechtwo = {
+            'name': 'Bobcatshark',
+            'core': 'fire',
+            'hp_current': 3,
+            'hp_max': 5,
+            'weapon': {
+                'name': 'AK-47 of Bullshit',
+                'resource_current': 1,
+                'resource_max': 5
+            },
+            'stats': {
+                'attack': 2,
+                'accuracy': 2,
+                'defense': 2,
+                'speed': 2
+            }
+        }
+
+        add_mech = function (mech) {
+            var template,
+                clone;
+
+            template = document.querySelector('#mechcard');
+            clone = document.importNode(template.content, true);
+            clone.querySelector('.mechname').textContent = mech.name;
+            if (mech.core === 'fire') {
+                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-fire';
+            }
+            else if (mech.core === 'lightning') {
+                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-flash';
+            }
+            else if (mech.core === 'earth') {
+                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-leaf';
+            }
+            else if (mech.core === 'water') {
+                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-tint';
+            }
+            clone.querySelector('.mechhealth').style = 'width: ' + (mech.hp_current * 100 / mech.hp_max) + '%';
+            clone.querySelector('.mechhealth').textContent = mech.hp_current + '/' + mech.hp_max;
+            clone.querySelector('.mechweaponname').textContent = mech.weapon.name;
+            clone.querySelector('.mechweaponres').style = 'width: ' + (mech.weapon.resource_current * 100 / mech.weapon.resource_max) + '%';
+            clone.querySelector('.mechweaponres').textContent = mech.weapon.resource_current + '/' + mech.weapon.resource_max;
+            clone.querySelector('.mechstatattack').textContent = mech.stats.attack + '(+0)';
+            clone.querySelector('.mechstataccuracy').textContent = mech.stats.accuracy + '(+0)';
+            clone.querySelector('.mechstatdefense').textContent = mech.stats.defense + '(+0)';
+            clone.querySelector('.mechstatspeed').textContent = mech.stats.speed + '(+0)';
+            document.body.querySelector('#mechlist').appendChild(clone);
+        }
+
+        $(document).ready(function () {
+            add_mech(mechone);
+            add_mech(mechtwo);
+            add_mech(mechtwo);
+            add_mech(mechtwo);
+            add_mech(mechtwo);
+        });
+    </script>
+  </body>
+</html>
