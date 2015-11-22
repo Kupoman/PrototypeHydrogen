@@ -152,8 +152,12 @@
             $(enemyid + ' img').css('bottom', enemy.bottom + '%')
 
             if (enemy.hp_current <= 0) {
-                console.log('remove ' + enemyid)
-                $(enemyid).remove()
+                $(enemyid).fadeOut({
+                    duration: 400,
+                    complete: function () {
+                        $(this).remove()
+                    }
+                })
             }
         }
 
