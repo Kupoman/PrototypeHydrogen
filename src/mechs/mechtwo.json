@@ -1,0 +1,17 @@
+{
+    "name": "Bobcatshark",
+    "core": "fire",
+    "hp_current": 3,
+    "hp_max": 5,
+    "weapon": {
+        "name": "AK-47 of Bullshit",
+        "resource_current": 1,
+        "resource_max": 5
+    },
+    "stats": {
+        "attack": 2,
+        "accuracy": 2,
+        "defense": 2,
+        "speed": 2
+    }
+}
