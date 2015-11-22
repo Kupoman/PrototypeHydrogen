@@ -1,11 +1,9 @@
 {
     "name": "Lynxshark",
     "core": "lightning",
-    "hp_current": 8,
     "hp_max": 10,
     "weapon": {
         "name": "Sword of Truth",
-        "resource_current": 2,
         "resource_max": 4
     },
     "stats": {

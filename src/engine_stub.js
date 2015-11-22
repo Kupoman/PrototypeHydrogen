@@ -14,6 +14,8 @@ Engine = {
                 Engine.mechs.push(data)
                 Engine.last_mechid += 1
                 data.id = Engine.last_mechid
+                data.hp_current = data.hp_max
+                data.weapon.resource_current = data.weapon.resource_max
                 add_mech(data)
             },
             error: function (xhr, status, error) {
