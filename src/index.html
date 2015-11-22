@@ -13,7 +13,7 @@
   </head>
   <body>
     <template id="mechcard">
-        <div class="panel panel-default col-sm-2">
+        <div class="mechcard panel panel-default col-sm-2" id="mc">
             <div class="panel-heading">
                 <h4 class="mechname"></h4>
             </div>
@@ -95,35 +95,42 @@
             window[$(this).attr('href')]()
         })
 
+        update_mech = function (mech) {
+            mechid = '#mc' + mech.id
+            $(mechid + ' .mechname').text(mech.name)
+            if (mech.core === 'fire') {
+                $(mechid + ' .mechcore').addClass('glyphicon glyphicon-fire')
+            }
+            else if (mech.core === 'lightning') {
+                $(mechid + ' .mechcore').addClass('glyphicon glyphicon-flash')
+            }
+            else if (mech.core === 'earth') {
+                $(mechid + ' .mechcore').addClass('glyphicon glyphicon-leaf')
+            }
+            else if (mech.core === 'water') {
+                $(mechid + ' .mechcore').addClass('glyphicon glyphicon-tint')
+            }
+            $(mechid + ' .mechhealth').css('width', (mech.hp_current * 100 / mech.hp_max) + '%')
+            $(mechid + ' .mechhealth').text(mech.hp_current + '/' + mech.hp_max)
+            $(mechid + ' .mechweaponname').text(mech.weapon.name)
+            $(mechid + ' .mechweaponres').css('width', (mech.weapon.resource_current * 100 / mech.weapon.resource_max) + '%')
+            $(mechid + ' .mechweaponres').text(mech.weapon.resource_current + '/' + mech.weapon.resource_max)
+            $(mechid + ' .mechstatattack').text(mech.stats.attack + '(+0)')
+            $(mechid + ' .mechstataccuracy').text(mech.stats.accuracy + '(+0)')
+            $(mechid + ' .mechstatdefense').text(mech.stats.defense + '(+0)')
+            $(mechid + ' .mechstatspeed').text(mech.stats.speed + '(+0)')
+        }
+
         add_mech = function (mech) {
             var template,
                 clone;
 
-            template = document.querySelector('#mechcard');
-            clone = document.importNode(template.content, true);
-            clone.querySelector('.mechname').textContent = mech.name;
-            if (mech.core === 'fire') {
-                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-fire';
-            }
-            else if (mech.core === 'lightning') {
-                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-flash';
-            }
-            else if (mech.core === 'earth') {
-                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-leaf';
-            }
-            else if (mech.core === 'water') {
-                clone.querySelector('.mechcore').className += ' glyphicon glyphicon-tint';
-            }
-            $(clone.querySelector('.mechhealth')).css('width', (mech.hp_current * 100 / mech.hp_max) + '%');
-            clone.querySelector('.mechhealth').textContent = mech.hp_current + '/' + mech.hp_max;
-            clone.querySelector('.mechweaponname').textContent = mech.weapon.name;
-            $(clone.querySelector('.mechweaponres')).css('width', (mech.weapon.resource_current * 100 / mech.weapon.resource_max) + '%');
-            clone.querySelector('.mechweaponres').textContent = mech.weapon.resource_current + '/' + mech.weapon.resource_max;
-            clone.querySelector('.mechstatattack').textContent = mech.stats.attack + '(+0)';
-            clone.querySelector('.mechstataccuracy').textContent = mech.stats.accuracy + '(+0)';
-            clone.querySelector('.mechstatdefense').textContent = mech.stats.defense + '(+0)';
-            clone.querySelector('.mechstatspeed').textContent = mech.stats.speed + '(+0)';
-            document.body.querySelector('#mechlist').appendChild(clone);
+            template = document.querySelector('#mechcard')
+            clone = document.importNode(template.content, true)
+            clone.querySelector('.mechcard').id = 'mc' + mech.id
+            document.body.querySelector('#mechlist').appendChild(clone)
+
+            update_mech(mech)
         }
     </script>
   </body>

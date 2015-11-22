@@ -4,6 +4,7 @@
 
 Engine = {
     mechs: [],
+    last_mechid: 0,
 
     load_mech_data: function (uri) {
         $.ajax({
@@ -11,6 +12,8 @@ Engine = {
             dataType: 'json',
             success: function (data) {
                 Engine.mechs.push(data)
+                Engine.last_mechid += 1
+                data.id = Engine.last_mechid
                 add_mech(data)
             },
             error: function (xhr, status, error) {
@@ -36,11 +39,12 @@ Engine = {
         Engine.mechs.forEach(function (mech) {
             if (mech.weapon.resource_current > 0) {
                 mech.weapon.resource_current -= 1;
-                console.log(mech.name + " attacks!");
+                console.log(mech.name + " attacks!")
             }
             else {
-                console.log(mech.name + " is out of resources!");
+                console.log(mech.name + " is out of resources!")
             }
+            update_mech(mech)
         })
     }
 }
