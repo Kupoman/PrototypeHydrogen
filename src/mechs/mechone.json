@@ -4,7 +4,7 @@
     "hp_max": 25,
     "weapon": {
         "name": "Sword of Truth",
-        "resource_max": 10
+        "resource_max": 20
     },
     "stats": {
         "attack": 16,

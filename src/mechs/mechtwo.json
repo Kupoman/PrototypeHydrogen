@@ -4,7 +4,7 @@
     "hp_max": 31,
     "weapon": {
         "name": "AK-47 of Bullshit",
-        "resource_max": 10
+        "resource_max": 20
     },
     "stats": {
         "attack": 12,
