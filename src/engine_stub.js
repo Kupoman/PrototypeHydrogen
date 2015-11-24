@@ -114,6 +114,7 @@ Engine = {
             if (combatant.resource_current[combatant.weapon.key]> 0) {
                 combatant.resource_current[combatant.weapon.key] -= 1;
                 update_mech(combatant)
+                animate_mech(combatant)
 
                 targets = (combatant.is_player) ? Engine.enemies : Engine.mechs
                 targets = targets.filter(function (x){ return x.hp_current > 0})

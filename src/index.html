@@ -9,6 +9,7 @@
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <link rel="stylesheet" href="animate.css">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
@@ -105,8 +106,28 @@
             window[$(this).attr('href')]()
         })
 
+        animate_mech = function (mech) {
+            var mechid,
+                anim
+
+            if (mech.is_player) {
+                mechid = '#mc' + mech.id
+                anim = 'bounce'
+            }
+            else {
+                mechid = '#en' + mech.id
+                anim = 'flash'
+            }
+
+            console.log(mech.is_player, $(mechid), anim)
+            $(mechid).addClass('animated ' + anim)
+            $(mechid).one('animationend', function () {
+                $(this).removeClass('animated ' + anim)
+            })
+        }
+
         update_mech = function (mech) {
-            mechid = '#mc' + mech.id
+            var mechid = '#mc' + mech.id
             $(mechid + ' .mechname').text(mech.name)
             if (mech.core === 'fire') {
                 $(mechid + ' .mechcore').addClass('glyphicon glyphicon-fire')
@@ -149,7 +170,7 @@
         }
 
         update_enemy = function (enemy) {
-            enemyid = '#en' + enemy.id
+            var enemyid = '#en' + enemy.id
 
             $(enemyid).css('left', enemy.left + '%')
             $(enemyid).css('bottom', enemy.bottom + '%')
