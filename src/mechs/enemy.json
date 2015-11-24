@@ -3,7 +3,7 @@
     "core": "lightning",
     "hp_max": 23,
     "weapon": {
-        "name": "Sword of Truth",
+        "name": "rifle",
         "resource_max": 20
     },
     "stats": {

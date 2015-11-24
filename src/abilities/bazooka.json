@@ -1,0 +1,9 @@
+{
+    "name" : "Bazooka",
+    "key" : "bazooka",
+    "resource_max" : 20,
+    "damage" : 4,
+    "defense" : 0,
+    "accuracy" : 0,
+    "speed" : 0
+}

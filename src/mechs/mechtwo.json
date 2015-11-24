@@ -3,7 +3,7 @@
     "core": "fire",
     "hp_max": 31,
     "weapon": {
-        "name": "AK-47 of Bullshit",
+        "name": "rifle",
         "resource_max": 20
     },
     "stats": {

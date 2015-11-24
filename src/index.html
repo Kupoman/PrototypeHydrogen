@@ -120,12 +120,12 @@
             $(mechid + ' .mechhealth').css('width', (mech.hp_current * 100 / mech.hp_max) + '%')
             $(mechid + ' .mechhealth').text(mech.hp_current + '/' + mech.hp_max)
             $(mechid + ' .mechweaponname').text(mech.weapon.name)
-            $(mechid + ' .mechweaponres').css('width', (mech.weapon.resource_current * 100 / mech.weapon.resource_max) + '%')
-            $(mechid + ' .mechweaponres').text(mech.weapon.resource_current + '/' + mech.weapon.resource_max)
-            $(mechid + ' .mechstatattack').text(mech.stats.attack + '(+0)')
-            $(mechid + ' .mechstataccuracy').text(mech.stats.accuracy + '(+0)')
-            $(mechid + ' .mechstatdefense').text(mech.stats.defense + '(+0)')
-            $(mechid + ' .mechstatspeed').text(mech.stats.speed + '(+0)')
+            $(mechid + ' .mechweaponres').css('width', (mech.resource_current[mech.weapon.key] * 100 / mech.weapon.resource_max) + '%')
+            $(mechid + ' .mechweaponres').text(mech.resource_current[mech.weapon.key] + '/' + mech.weapon.resource_max)
+            $(mechid + ' .mechstatattack').text(mech.stats.attack + '(+' + mech.weapon.damage + ')')
+            $(mechid + ' .mechstataccuracy').text(mech.stats.accuracy + '(+' + mech.weapon.accuracy + ')')
+            $(mechid + ' .mechstatdefense').text(mech.stats.defense + '(+' + mech.weapon.defense + ')')
+            $(mechid + ' .mechstatspeed').text(mech.stats.speed + '(+' + mech.weapon.speed + ')')
 
             if (mech.hp_current <= 0) {
                 $(mechid).removeClass('panel-default')

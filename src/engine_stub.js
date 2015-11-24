@@ -15,6 +15,11 @@ Engine = {
         [0.85, 0.7]
     ],
 
+    abilities: {
+        "rifle": {},
+        "bazooka": {}
+    },
+
 
     load_mech_data: function (uri, is_player) {
         $.ajax({
@@ -24,7 +29,9 @@ Engine = {
                 Engine.last_mechid += 1
                 data.id = Engine.last_mechid
                 data.hp_current = data.hp_max
-                data.weapon.resource_current = data.weapon.resource_max
+                data.weapon = Engine.abilities[data.weapon.name]
+                data.resource_current = {}
+                data.resource_current[data.weapon.key] = data.weapon.resource_max
                 data.initiative = 0
                 data.is_player = is_player
                 if (is_player) {
@@ -49,7 +56,27 @@ Engine = {
         })
     },
 
+    load_ability_data: function (name) {
+        $.ajax({
+            url: "abilities/" + name + ".json",
+            dataType: 'json',
+            success: function (data) {
+                Engine.abilities[name] = data
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+                console.log('failed to load ' + name)
+            }
+        })
+    },
+
     init: function () {
+        var deferreds = []
+        for (name in Engine.abilities) {
+            deferreds.push(Engine.load_ability_data(name))
+        }
+        $.when.apply($, deferreds).then(function(x) {})
+
         for (i = 0; i < 5; i++) {
             Engine.load_mech_data('mechs/enemy.json', false)
         }
@@ -73,7 +100,7 @@ Engine = {
         Engine.mechs.concat(Engine.enemies).forEach(function (combatant) {
             if (combatant.hp_current != 0) {
                 init_roll = Math.floor((Math.random() * 21) + 1)
-                init_mod = (combatant.stats.speed - 10) / 2
+                init_mod = (combatant.stats.speed + combatant.weapon.speed - 10) / 2
                 combatant.initiative = init_roll + init_mod
                 combatants.push(combatant)
             }
@@ -84,18 +111,18 @@ Engine = {
         combatants.forEach(function (combatant) {
             if (Engine.is_combat_over || combatant.hp_current <= 0) return
 
-            if (combatant.weapon.resource_current > 0) {
-                combatant.weapon.resource_current -= 1;
+            if (combatant.resource_current[combatant.weapon.key]> 0) {
+                combatant.resource_current[combatant.weapon.key] -= 1;
                 update_mech(combatant)
 
                 targets = (combatant.is_player) ? Engine.enemies : Engine.mechs
                 targets = targets.filter(function (x){ return x.hp_current > 0})
                 target = targets[Math.floor(Math.random() * targets.length)]
                 attack_roll = Math.floor((Math.random() * 21) + 1)
-                attack_mod = (combatant.stats.accuracy - 10) / 2
-                if (attack_roll + attack_mod >= 10 + (target.stats.defense - 10) / 2) {
+                attack_mod = (combatant.stats.accuracy + combatant.weapon.accuracy - 10) / 2
+                if (attack_roll + attack_mod >= 10 + (target.stats.defense + target.weapon.defense - 10) / 2) {
                     damage_roll = Math.floor((Math.random() * 7) + 1)
-                    damage_mod = (combatant.stats.attack - 10) / 2
+                    damage_mod = (combatant.stats.attack + combatant.weapon.damage - 10) / 2
                     damage = damage_roll + damage_mod
                     target.hp_current = Math.max(target.hp_current - damage, 0)
                     if (target.is_player) {
