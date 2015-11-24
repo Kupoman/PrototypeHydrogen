@@ -88,6 +88,12 @@
     <script src="engine_stub.js"></script>
 
     <script>
+        var _ui_lock = false
+
+        lock_ui = function (enable) {
+            _ui_lock = enable
+        }
+
         do_attack = function () {
             Engine.do_attack()
         }
@@ -103,27 +109,30 @@
 
         $('.command-list a').click(function (evt) {
             evt.preventDefault()
-            window[$(this).attr('href')]()
+            if (!_ui_lock) {
+                window[$(this).attr('href')]()
+            }
         })
 
-        animate_mech = function (mech) {
+        animate_mech = function (mech, anim) {
             var mechid,
-                anim
+                dfrd
 
             if (mech.is_player) {
                 mechid = '#mc' + mech.id
-                anim = 'bounce'
             }
             else {
                 mechid = '#en' + mech.id
-                anim = 'flash'
             }
 
-            console.log(mech.is_player, $(mechid), anim)
+            dfrd = $.Deferred()
             $(mechid).addClass('animated ' + anim)
             $(mechid).one('animationend', function () {
                 $(this).removeClass('animated ' + anim)
+                dfrd.resolve()
             })
+
+            return dfrd.promise()
         }
 
         update_mech = function (mech) {

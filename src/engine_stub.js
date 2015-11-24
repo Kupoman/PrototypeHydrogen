@@ -96,6 +96,8 @@ Engine = {
         if (Engine.is_combat_over)
             return
 
+        lock_ui(true)
+
         var combatants = []
         Engine.mechs.concat(Engine.enemies).forEach(function (combatant) {
             if (combatant.hp_current != 0) {
@@ -108,51 +110,84 @@ Engine = {
 
         combatants.sort(function(a, b) {return a.initiative - b.initiative})
 
-        combatants.forEach(function (combatant) {
-            if (Engine.is_combat_over || combatant.hp_current <= 0) return
+        begin_attack = function (combatant) {
+            var dfd = $.Deferred()
+
+            if (Engine.is_combat_over || combatant.hp_current <= 0) {
+                dfd.resolve()
+            }
 
             if (combatant.resource_current[combatant.weapon.key]> 0) {
                 combatant.resource_current[combatant.weapon.key] -= 1;
-                update_mech(combatant)
-                animate_mech(combatant)
+                animate_attack(combatant).then(dfd.resolve)
+            }
+            else {
+                console.log(combatant.name + " is out of resources!")
+                dfd.resolve()
+            }
 
+            return dfd.promise()
+        }
+
+        animate_attack = function (combatant) {
+            var dfd = $.Deferred()
+
+            update_mech(combatant)
+            animate_mech(combatant, 'bounce').then(function () {
                 targets = (combatant.is_player) ? Engine.enemies : Engine.mechs
                 targets = targets.filter(function (x){ return x.hp_current > 0})
                 target = targets[Math.floor(Math.random() * targets.length)]
                 attack_roll = Math.floor((Math.random() * 21) + 1)
                 attack_mod = (combatant.stats.accuracy + combatant.weapon.accuracy - 10) / 2
                 if (attack_roll + attack_mod >= 10 + (target.stats.defense + target.weapon.defense - 10) / 2) {
-                    damage_roll = Math.floor((Math.random() * 7) + 1)
-                    damage_mod = (combatant.stats.attack + combatant.weapon.damage - 10) / 2
-                    damage = damage_roll + damage_mod
-                    target.hp_current = Math.max(target.hp_current - damage, 0)
-                    if (target.is_player) {
-                        update_mech(target)
-                    }
-                    else {
-                        update_enemy(target)
-                    }
-                    console.log(combatant.name + " attacks " + target.name + " for " + damage + " points of damage!")
-                    if (target.hp_current == 0) {
-                        console.log(target.name + " has fallen!")
-                        if (targets.length == 1) {
-                            if (combatant.is_player)
-                                console.log("The player wins!")
-                            else
-                                console.log("The player loses :(")
-
-                            Engine.is_combat_over = true;
-                            return
+                    animate_mech(target, 'flash').then(function () {
+                        damage_roll = Math.floor((Math.random() * 7) + 1)
+                        damage_mod = (combatant.stats.attack + combatant.weapon.damage - 10) / 2
+                        damage = damage_roll + damage_mod
+                        target.hp_current = Math.max(target.hp_current - damage, 0)
+                        if (target.is_player) {
+                            update_mech(target)
                         }
-                    }
+                        else {
+                            update_enemy(target)
+                        }
+                        console.log(combatant.name + " attacks " + target.name + " for " + damage + " points of damage!")
+                        if (target.hp_current == 0) {
+                            console.log(target.name + " has fallen!")
+                            if (targets.length == 1) {
+                                if (combatant.is_player)
+                                    console.log("The player wins!")
+                                else
+                                    console.log("The player loses :(")
+
+                                Engine.is_combat_over = true;
+                                return
+                            }
+                        }
+                    })
                 }
                 else {
                     console.log(combatant.name + " attacks " + target.name + ", but misses!")
                 }
-            }
-            else {
-                console.log(combatant.name + " is out of resources!")
-            }
+
+                dfd.resolve()
+            })
+            return dfd.promise()
+        }
+
+        // Queue up actions
+        var dfd = $.Deferred().resolve()
+
+        combatants.forEach(function (combatant) {
+            (function (c) {
+                dfd = dfd.then(function () {
+                    return begin_attack(c)
+                })
+            })(combatant)
+        })
+
+        dfd.then(function () {
+            lock_ui(false)
         })
     }
 }
