@@ -50,6 +50,9 @@
 
     <template id="enemypic">
         <div class="enemypic">
+            <div class="progress">
+                <div class="enemyhealth progress-bar progress-bar-danger" role="progressbar"></div>
+            </div>
             <img src="enemy.png">
         </div>
     </template>
@@ -148,8 +151,10 @@
         update_enemy = function (enemy) {
             enemyid = '#en' + enemy.id
 
-            $(enemyid + ' img').css('left', enemy.left + '%')
-            $(enemyid + ' img').css('bottom', enemy.bottom + '%')
+            $(enemyid).css('left', enemy.left + '%')
+            $(enemyid).css('bottom', enemy.bottom + '%')
+
+            $(enemyid + ' .enemyhealth').css('width', (enemy.hp_current * 100 / enemy.hp_max) + '%')
 
             if (enemy.hp_current <= 0) {
                 $(enemyid).fadeOut({
