@@ -93,8 +93,10 @@ Engine = {
     },
 
     do_attack: function () {
-        if (Engine.is_combat_over)
+        if (Engine.is_combat_over) {
+            location.reload()
             return
+        }
 
         lock_ui(true)
 
