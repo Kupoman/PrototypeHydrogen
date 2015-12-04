@@ -101,6 +101,12 @@
         }
 
         do_run = function () {
+            Engine.enemies.forEach(function (enemy) {
+                enemy.hp_current = 0
+                update_enemy(enemy)
+            })
+
+            Engine.is_combat_over = true
         }
 
         $('.command-list a').click(function (evt) {
