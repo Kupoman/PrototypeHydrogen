@@ -2,7 +2,9 @@
 // intended to work with Panda3D (e.g., utils) should go in their
 // own JS file.
 
-Engine = {
+"use strict"
+
+var Engine = {
     mechs: [],
     enemies: [],
     is_combat_over: false,
@@ -93,6 +95,9 @@ Engine = {
     },
 
     do_attack: function () {
+        var begin_attack,
+            animate_attack
+
         if (Engine.is_combat_over) {
             location.reload()
             return
@@ -102,6 +107,9 @@ Engine = {
 
         var combatants = []
         Engine.mechs.concat(Engine.enemies).forEach(function (combatant) {
+            var init_roll,
+                init_mod
+
             if (combatant.hp_current != 0) {
                 init_roll = Math.floor((Math.random() * 21) + 1)
                 init_mod = (combatant.stats.speed + combatant.weapon.speed - 10) / 2
@@ -132,12 +140,28 @@ Engine = {
         }
 
         animate_attack = function (combatant) {
-            var dfd = $.Deferred()
+            var dfd = $.Deferred(),
+                targets
 
             update_mech(combatant)
+
+            targets = (combatant.is_player) ? Engine.enemies : Engine.mechs
+            targets = targets.filter(function (x){ return x.hp_current > 0})
+            if (targets.length == 0) {
+                // Nothing to attack
+                console.log(combatant.name + " is out of targets!")
+                dfd.resolve()
+                return dfd.promise()
+            }
+
             animate_mech(combatant, 'bounce').then(function () {
-                targets = (combatant.is_player) ? Engine.enemies : Engine.mechs
-                targets = targets.filter(function (x){ return x.hp_current > 0})
+                var target,
+                    attack_roll,
+                    attack_mod,
+                    damage_roll,
+                    damage_mod,
+                    damage
+
                 target = targets[Math.floor(Math.random() * targets.length)]
                 attack_roll = Math.floor((Math.random() * 21) + 1)
                 attack_mod = (combatant.stats.accuracy + combatant.weapon.accuracy - 10) / 2
@@ -156,23 +180,16 @@ Engine = {
                         console.log(combatant.name + " attacks " + target.name + " for " + damage + " points of damage!")
                         if (target.hp_current == 0) {
                             console.log(target.name + " has fallen!")
-                            if (targets.length == 1) {
-                                if (combatant.is_player)
-                                    console.log("The player wins!")
-                                else
-                                    console.log("The player loses :(")
-
-                                Engine.is_combat_over = true;
-                                return
-                            }
                         }
+
+                        dfd.resolve()
                     })
                 }
                 else {
                     console.log(combatant.name + " attacks " + target.name + ", but misses!")
+                    dfd.resolve()
                 }
 
-                dfd.resolve()
             })
             return dfd.promise()
         }
@@ -189,6 +206,15 @@ Engine = {
         })
 
         dfd.then(function () {
+            if (Engine.enemies.filter(function(x) {return x.hp_current > 0}).length == 0) {
+                console.log("The player wins!")
+                Engine.is_combat_over = true
+            }
+            else if (Engine.mechs.filter(function(x) {return x.hp_current > 0}).length == 0) {
+                console.log("The player loses :(")
+                Engine.is_combat_over = true
+            }
+
             lock_ui(false)
         })
     }
