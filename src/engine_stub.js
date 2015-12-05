@@ -186,8 +186,10 @@ var Engine = {
                     })
                 }
                 else {
-                    console.log(combatant.name + " attacks " + target.name + ", but misses!")
-                    dfd.resolve()
+                    animate_mech(target, 'bounce').then(function () {
+                        console.log(combatant.name + " attacks " + target.name + ", but misses!")
+                        dfd.resolve()
+                    })
                 }
 
             })
