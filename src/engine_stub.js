@@ -10,11 +10,9 @@ var Engine = {
     is_combat_over: false,
     last_mechid: 0,
     enemy_positions: [
-        [0.05, 0.7],
         [0.25, 0.6],
         [0.45, 0.7],
-        [0.65, 0.6],
-        [0.85, 0.7]
+        [0.65, 0.6]
     ],
 
     abilities: {
@@ -79,7 +77,7 @@ var Engine = {
         }
         $.when.apply($, deferreds).then(function(x) {})
 
-        for (i = 0; i < 5; i++) {
+        for (var i = 0; i < 3; i++) {
             Engine.load_mech_data('mechs/enemy.json', false)
         }
 
