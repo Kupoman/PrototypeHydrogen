@@ -154,7 +154,7 @@ var Engine = {
                 return dfd.promise()
             }
 
-            animate_mech(combatant, 'bounce').then(function () {
+            animate_mech(combatant, 'tada').then(function () {
                 var target,
                     attack_roll,
                     attack_mod,
