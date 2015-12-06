@@ -9,7 +9,6 @@ function CombatState() {
 
     self.mechs = []
     self.enemies = []
-    self.is_combat_over = false
     self.last_mechid = 0
     self.enemy_positions = [
         [0.25, 0.6],
@@ -56,7 +55,7 @@ function CombatState() {
                 console.log('failed to load ' + uri)
             }
         })
-    },
+    }
 
     self.load_ability_data = function (name) {
         var abilities = self.abilities
@@ -72,10 +71,13 @@ function CombatState() {
                 console.log('failed to load ' + name)
             }
         })
-    },
+    }
 
     self.init = function () {
         var deferreds = []
+    
+        Engine.render('combat')
+
         for (name in self.abilities) {
             deferreds.push(self.load_ability_data(name))
         }
@@ -90,16 +92,16 @@ function CombatState() {
         self.load_mech_data('mechs/mechone.json', true)
         self.load_mech_data('mechs/mechtwo.json', true)
         self.load_mech_data('mechs/mechone.json', true)
-    },
+    }
+
+    self.end = function () {
+        $('.enemypic').remove()
+        $('.mechcard').remove()
+    }
 
     self.do_attack = function () {
         var begin_attack,
             animate_attack
-
-        if (self.is_combat_over) {
-            location.reload()
-            return
-        }
 
         lock_ui(true)
 
@@ -121,7 +123,7 @@ function CombatState() {
         begin_attack = function (combatant) {
             var dfd = $.Deferred()
 
-            if (self.is_combat_over || combatant.hp_current <= 0) {
+            if (combatant.hp_current <= 0) {
                 dfd.resolve()
             }
 
@@ -208,11 +210,11 @@ function CombatState() {
         dfd.then(function () {
             if (self.enemies.filter(function(x) {return x.hp_current > 0}).length == 0) {
                 console.log("The player wins!")
-                self.is_combat_over = true
+                Engine.switch_state(MenuState)
             }
             else if (self.mechs.filter(function(x) {return x.hp_current > 0}).length == 0) {
                 console.log("The player loses :(")
-                self.is_combat_over = true
+                Engine.switch_state(MenuState)
             }
 
             lock_ui(false)
@@ -223,12 +225,28 @@ function CombatState() {
     }
 
     self.do_run = function () {
-        self.enemies.forEach(function (enemy) {
-            enemy.hp_current = 0
-            update_enemy(enemy)
-        })
+        console.log("The player has run away...")
+        Engine.switch_state(MenuState)
+    }
+}
 
-        self.is_combat_over = true
+
+function MenuState() {
+    var self = this
+
+    this.init = function () {
+        Engine.render('menu')
+    }
+
+    this.end = function () {
+    }
+
+    this.do_combat = function () {
+        Engine.switch_state(CombatState)
+    }
+
+    this.do_customize = function () {
+        console.log("Customize mech")
     }
 }
 
@@ -236,7 +254,7 @@ var Engine = {
     state: {end: function(){} },
 
     init: function () {
-        Engine.switch_state(CombatState)
+        Engine.switch_state(MenuState)
     },
 
     switch_state: function (next_state) {
@@ -247,6 +265,13 @@ var Engine = {
 
     do_action: function (action) {
         Engine.state[action]()
+    },
+
+    render: function (page) {
+        var pageid = '#' + page + '-page'
+
+        $('.page').removeClass('showpage')
+        $(pageid).addClass('showpage')
     },
 
     main: function () {

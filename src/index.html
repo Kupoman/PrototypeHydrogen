@@ -58,23 +58,36 @@
         </div>
     </template>
 
-    <div class="container-fluid">
-        <div id="mechlist" class="row">
-            <div class="panel panel-default col-sm-2 command-list">
-                <div class="panel-heading">
-                    <h3>Commands</h3>
-                </div>
-                <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked">
-                        <li><a href="do_attack">Attack</a></li>
-                        <li><a href="do_change_formation">Change Formation</a></li>
-                        <!-- <li class="nav-divider"></li>
-                        <li><a href="#">Formation Alpha</a></li>
-                        <li><a href="#">Formation Beta</a></li>
-                        <li><a href="#">Formation Gamma</a></li>
-                        <li class="nav-divider"></li> -->
-                        <li><a href="do_run">Run</a></li>
-                    </ul>
+    <div id="menu-page" class="page">
+        <div class="page-header">
+            <h1>Prototype Hydrogen</h1>
+        </div>
+
+        <ul class="nav nav-pills nav-stacked">
+            <li><a href="do_combat">Begin Combat</a></li>
+            <li><a href="do_customize">Customize Mechs</a></li>
+        </ul>
+    </div>
+
+    <div id="combat-page" class="page">
+        <div class="container-fluid">
+            <div id="mechlist" class="row">
+                <div class="panel panel-default col-sm-2 command-list">
+                    <div class="panel-heading">
+                        <h3>Commands</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><a href="do_attack">Attack</a></li>
+                            <li><a href="do_change_formation">Change Formation</a></li>
+                            <!-- <li class="nav-divider"></li>
+                            <li><a href="#">Formation Alpha</a></li>
+                            <li><a href="#">Formation Beta</a></li>
+                            <li><a href="#">Formation Gamma</a></li>
+                            <li class="nav-divider"></li> -->
+                            <li><a href="do_run">Run</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,7 +106,7 @@
             _ui_lock = enable
         }
 
-        $('.command-list a').click(function (evt) {
+        $('a').click(function (evt) {
             evt.preventDefault()
             if (!_ui_lock) {
                 Engine.do_action($(this).attr('href'))
