@@ -93,26 +93,10 @@
             _ui_lock = enable
         }
 
-        do_attack = function () {
-            Engine.do_attack()
-        }
-
-        do_change_formation = function () {
-        }
-
-        do_run = function () {
-            Engine.enemies.forEach(function (enemy) {
-                enemy.hp_current = 0
-                update_enemy(enemy)
-            })
-
-            Engine.is_combat_over = true
-        }
-
         $('.command-list a').click(function (evt) {
             evt.preventDefault()
             if (!_ui_lock) {
-                window[$(this).attr('href')]()
+                Engine.do_action($(this).attr('href'))
             }
         })
 

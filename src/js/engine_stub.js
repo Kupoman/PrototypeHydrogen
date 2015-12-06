@@ -4,48 +4,50 @@
 
 "use strict"
 
-var Engine = {
-    mechs: [],
-    enemies: [],
-    is_combat_over: false,
-    last_mechid: 0,
-    enemy_positions: [
+function CombatState() {
+    var self = this
+
+    self.mechs = []
+    self.enemies = []
+    self.is_combat_over = false
+    self.last_mechid = 0
+    self.enemy_positions = [
         [0.25, 0.6],
         [0.45, 0.7],
         [0.65, 0.6]
-    ],
+    ]
 
-    abilities: {
+    self.abilities = {
         "rifle": {},
         "bazooka": {}
-    },
+    }
 
 
-    load_mech_data: function (uri, is_player) {
+    self.load_mech_data = function (uri, is_player) {
         $.ajax({
             url: uri,
             dataType: 'json',
             success: function (data) {
-                Engine.last_mechid += 1
-                data.id = Engine.last_mechid
+                self.last_mechid += 1
+                data.id = self.last_mechid
                 data.hp_current = data.hp_max
-                data.weapon = Engine.abilities[data.weapon.name]
+                data.weapon = self.abilities[data.weapon.name]
                 data.resource_current = {}
                 data.resource_current[data.weapon.key] = data.weapon.resource_max
                 data.initiative = 0
                 data.is_player = is_player
                 if (is_player) {
-                    Engine.mechs.push(data)
+                    self.mechs.push(data)
                     add_mech(data)
                 }
                 else {
                     var pos
 
                     data.name += data.id
-                    pos = Engine.enemy_positions[Engine.enemies.length]
+                    pos = self.enemy_positions[self.enemies.length]
                     data.left = pos[0] * 100
                     data.bottom = pos[1] * 100
-                    Engine.enemies.push(data)
+                    self.enemies.push(data)
                     add_enemy(data)
                 }
             },
@@ -56,12 +58,14 @@ var Engine = {
         })
     },
 
-    load_ability_data: function (name) {
+    self.load_ability_data = function (name) {
+        var abilities = self.abilities
+
         $.ajax({
             url: "abilities/" + name + ".json",
             dataType: 'json',
             success: function (data) {
-                Engine.abilities[name] = data
+                abilities[name] = data
             },
             error: function (xhr, status, error) {
                 console.log(error)
@@ -70,33 +74,29 @@ var Engine = {
         })
     },
 
-    init: function () {
+    self.init = function () {
         var deferreds = []
-        for (name in Engine.abilities) {
-            deferreds.push(Engine.load_ability_data(name))
+        for (name in self.abilities) {
+            deferreds.push(self.load_ability_data(name))
         }
         $.when.apply($, deferreds).then(function(x) {})
 
         for (var i = 0; i < 3; i++) {
-            Engine.load_mech_data('mechs/enemy.json', false)
+            self.load_mech_data('mechs/enemy.json', false)
         }
 
-        Engine.load_mech_data('mechs/mechone.json', true)
-        Engine.load_mech_data('mechs/mechtwo.json', true)
-        Engine.load_mech_data('mechs/mechone.json', true)
-        Engine.load_mech_data('mechs/mechtwo.json', true)
-        Engine.load_mech_data('mechs/mechone.json', true)
+        self.load_mech_data('mechs/mechone.json', true)
+        self.load_mech_data('mechs/mechtwo.json', true)
+        self.load_mech_data('mechs/mechone.json', true)
+        self.load_mech_data('mechs/mechtwo.json', true)
+        self.load_mech_data('mechs/mechone.json', true)
     },
 
-    main: function () {
-        window.requestAnimationFrame(Engine.main)
-    },
-
-    do_attack: function () {
+    self.do_attack = function () {
         var begin_attack,
             animate_attack
 
-        if (Engine.is_combat_over) {
+        if (self.is_combat_over) {
             location.reload()
             return
         }
@@ -104,7 +104,7 @@ var Engine = {
         lock_ui(true)
 
         var combatants = []
-        Engine.mechs.concat(Engine.enemies).forEach(function (combatant) {
+        self.mechs.concat(self.enemies).forEach(function (combatant) {
             var init_roll,
                 init_mod
 
@@ -121,7 +121,7 @@ var Engine = {
         begin_attack = function (combatant) {
             var dfd = $.Deferred()
 
-            if (Engine.is_combat_over || combatant.hp_current <= 0) {
+            if (self.is_combat_over || combatant.hp_current <= 0) {
                 dfd.resolve()
             }
 
@@ -143,7 +143,7 @@ var Engine = {
 
             update_mech(combatant)
 
-            targets = (combatant.is_player) ? Engine.enemies : Engine.mechs
+            targets = (combatant.is_player) ? self.enemies : self.mechs
             targets = targets.filter(function (x){ return x.hp_current > 0})
             if (targets.length == 0) {
                 // Nothing to attack
@@ -206,17 +206,51 @@ var Engine = {
         })
 
         dfd.then(function () {
-            if (Engine.enemies.filter(function(x) {return x.hp_current > 0}).length == 0) {
+            if (self.enemies.filter(function(x) {return x.hp_current > 0}).length == 0) {
                 console.log("The player wins!")
-                Engine.is_combat_over = true
+                self.is_combat_over = true
             }
-            else if (Engine.mechs.filter(function(x) {return x.hp_current > 0}).length == 0) {
+            else if (self.mechs.filter(function(x) {return x.hp_current > 0}).length == 0) {
                 console.log("The player loses :(")
-                Engine.is_combat_over = true
+                self.is_combat_over = true
             }
 
             lock_ui(false)
         })
+    }
+
+    self.do_change_formation = function () {
+    }
+
+    self.do_run = function () {
+        self.enemies.forEach(function (enemy) {
+            enemy.hp_current = 0
+            update_enemy(enemy)
+        })
+
+        self.is_combat_over = true
+    }
+}
+
+var Engine = {
+    state: {end: function(){} },
+
+    init: function () {
+        Engine.switch_state(CombatState)
+    },
+
+    switch_state: function (next_state) {
+        Engine.state.end()
+        Engine.state = new next_state()
+        Engine.state.init()
+    },
+
+    do_action: function (action) {
+        Engine.state[action]()
+    },
+
+    main: function () {
+        window.requestAnimationFrame(Engine.main)
     }
 }
 
