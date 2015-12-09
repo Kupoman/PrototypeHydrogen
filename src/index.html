@@ -69,6 +69,25 @@
         </ul>
     </div>
 
+    <div id="mech-list-page" class="page">
+        <div class="page-header">
+            <h1>Mechs</h1>
+        </div>
+
+        <ul id="mech-status-list" class="nav nav-pills nav-stacked">
+        </ul>
+
+        <a href="do_button_main" class="btn btn-primary">Go back</a>
+    </div>
+
+    <div id="mech-status-page" class="page">
+        <div class="page-header">
+            <h1>Mech Status: <small id="mech-status-name"></small></h1>
+        </div>
+
+        <a href="do_customize" class="btn btn-primary">Go back</a>
+    </div>
+
     <div id="combat-page" class="page">
         <div class="container-fluid">
             <div id="mechlist" class="row">
@@ -204,6 +223,21 @@
             document.body.appendChild(clone)
 
             update_enemy(enemy)
+        }
+
+        update_mech_list = function (mechs) {
+            $('#mech-status-list').empty()
+
+            mechs.forEach(function (mech) {
+                $('#mech-status-list').append('<li><a href="' + mechs.indexOf(mech) +  '">' + mech.name + '</a></li>')
+            })
+
+            $('#mech-status-list a').click(function (evt) {
+                var mech = mechs[$(this).attr('href')]
+                evt.preventDefault()
+                Engine.render('mech-status')
+                $('#mech-status-page .page-header small').text(mech.name)
+            })
         }
     </script>
 

@@ -198,7 +198,12 @@ function MenuState() {
     }
 
     this.do_customize = function () {
-        console.log("Customize mech")
+        Engine.render('mech-list')
+        update_mech_list(Engine.player.mechs)
+    }
+
+    this.do_button_main = function () {
+        Engine.render('menu')
     }
 }
 
