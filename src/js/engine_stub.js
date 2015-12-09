@@ -4,6 +4,16 @@
 
 "use strict"
 
+function PlayerData() {
+    var self = this
+
+    self.mechs = [
+        Engine.load_mech_data('mechs/mechone.json'),
+        Engine.load_mech_data('mechs/mechtwo.json'),
+        Engine.load_mech_data('mechs/mechone.json')
+    ]
+}
+
 function CombatState() {
     var self = this
 
@@ -16,82 +26,28 @@ function CombatState() {
         [0.65, 0.6]
     ]
 
-    self.abilities = {
-        "rifle": {},
-        "bazooka": {}
-    }
-
-
-    self.load_mech_data = function (uri, is_player) {
-        $.ajax({
-            url: uri,
-            dataType: 'json',
-            success: function (data) {
-                self.last_mechid += 1
-                data.id = self.last_mechid
-                data.hp_current = data.hp_max
-                data.weapon = self.abilities[data.weapon.name]
-                data.resource_current = {}
-                data.resource_current[data.weapon.key] = data.weapon.resource_max
-                data.initiative = 0
-                data.is_player = is_player
-                if (is_player) {
-                    self.mechs.push(data)
-                    add_mech(data)
-                }
-                else {
-                    var pos
-
-                    data.name += data.id
-                    pos = self.enemy_positions[self.enemies.length]
-                    data.left = pos[0] * 100
-                    data.bottom = pos[1] * 100
-                    self.enemies.push(data)
-                    add_enemy(data)
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(error)
-                console.log('failed to load ' + uri)
-            }
-        })
-    }
-
-    self.load_ability_data = function (name) {
-        var abilities = self.abilities
-
-        $.ajax({
-            url: "abilities/" + name + ".json",
-            dataType: 'json',
-            success: function (data) {
-                abilities[name] = data
-            },
-            error: function (xhr, status, error) {
-                console.log(error)
-                console.log('failed to load ' + name)
-            }
-        })
-    }
 
     self.init = function () {
         var deferreds = []
     
         Engine.render('combat')
 
-        for (name in self.abilities) {
-            deferreds.push(self.load_ability_data(name))
-        }
-        $.when.apply($, deferreds).then(function(x) {})
-
         for (var i = 0; i < 3; i++) {
-            self.load_mech_data('mechs/enemy.json', false)
-        }
+            var data,
+                pos
 
-        self.load_mech_data('mechs/mechone.json', true)
-        self.load_mech_data('mechs/mechtwo.json', true)
-        self.load_mech_data('mechs/mechone.json', true)
-        self.load_mech_data('mechs/mechtwo.json', true)
-        self.load_mech_data('mechs/mechone.json', true)
+            data = Engine.load_mech_data('mechs/enemy.json')
+            data.name += data.id
+            pos = self.enemy_positions[self.enemies.length]
+            data.left = pos[0] * 100
+            data.bottom = pos[1] * 100
+            self.enemies.push(data)
+            add_enemy(data)
+        }
+        
+        Engine.player.mechs.forEach(function (mech) {
+            add_mech(mech)
+        })
     }
 
     self.end = function () {
@@ -106,7 +62,7 @@ function CombatState() {
         lock_ui(true)
 
         var combatants = []
-        self.mechs.concat(self.enemies).forEach(function (combatant) {
+        Engine.player.mechs.concat(self.enemies).forEach(function (combatant) {
             var init_roll,
                 init_mod
 
@@ -145,7 +101,7 @@ function CombatState() {
 
             update_mech(combatant)
 
-            targets = (combatant.is_player) ? self.enemies : self.mechs
+            targets = (Engine.player.mechs.indexOf(combatant) > -1) ? self.enemies : Engine.player.mechs
             targets = targets.filter(function (x){ return x.hp_current > 0})
             if (targets.length == 0) {
                 // Nothing to attack
@@ -171,12 +127,8 @@ function CombatState() {
                         damage_mod = (combatant.stats.attack + combatant.weapon.damage - 10) / 2
                         damage = damage_roll + damage_mod
                         target.hp_current = Math.max(target.hp_current - damage, 0)
-                        if (target.is_player) {
-                            update_mech(target)
-                        }
-                        else {
-                            update_enemy(target)
-                        }
+                        update_mech(target)
+                        update_enemy(target)
                         console.log(combatant.name + " attacks " + target.name + " for " + damage + " points of damage!")
                         if (target.hp_current == 0) {
                             console.log(target.name + " has fallen!")
@@ -212,7 +164,7 @@ function CombatState() {
                 console.log("The player wins!")
                 Engine.switch_state(MenuState)
             }
-            else if (self.mechs.filter(function(x) {return x.hp_current > 0}).length == 0) {
+            else if (Engine.player.mechs.filter(function(x) {return x.hp_current > 0}).length == 0) {
                 console.log("The player loses :(")
                 Engine.switch_state(MenuState)
             }
@@ -251,9 +203,22 @@ function MenuState() {
 }
 
 var Engine = {
+    last_mechid: 0,
+    abilities: {
+        "rifle": {},
+        "bazooka": {}
+    },
+
     state: {end: function(){} },
 
     init: function () {
+        for (name in Engine.abilities) {
+            Engine.load_ability_data(name)
+        }
+
+        Engine.player = new PlayerData()
+        console.log(Engine.player)
+
         Engine.switch_state(MenuState)
     },
 
@@ -272,6 +237,47 @@ var Engine = {
 
         $('.page').removeClass('showpage')
         $(pageid).addClass('showpage')
+    },
+
+    load_ability_data: function (name) {
+        $.ajax({
+            url: "abilities/" + name + ".json",
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                Engine.abilities[name] = data
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+                console.log('failed to load ' + name)
+            }
+        })
+    },
+
+    load_mech_data: function (uri) {
+        var retval = {}
+
+        $.ajax({
+            url: uri,
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                Engine.last_mechid += 1
+                data.id = Engine.last_mechid
+                data.hp_current = data.hp_max
+                data.weapon = Engine.abilities[data.weapon.name]
+                data.resource_current = {}
+                data.resource_current[data.weapon.key] = data.weapon.resource_max
+                data.initiative = 0
+                retval = data
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+                console.log('failed to load ' + uri)
+            }
+        })
+
+        return retval
     },
 
     main: function () {

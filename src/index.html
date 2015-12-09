@@ -117,10 +117,9 @@
             var mechid,
                 dfrd
 
-            if (mech.is_player) {
-                mechid = '#mc' + mech.id
-            }
-            else {
+            mechid = '#mc' + mech.id
+
+            if ($(mechid).length === 0) {
                 mechid = '#en' + mech.id
             }
 
