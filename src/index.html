@@ -85,6 +85,58 @@
             <h1>Mech Status: <small id="mech-status-name"></small></h1>
         </div>
 
+        <div class="container-fluid">
+            <div class="row">
+                <div id="mech-status-block" class="col-sm-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Stats
+                        </div>
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr>
+                                    <td><span class="glyphicon glyphicon-cutlery"></span></td>
+                                    <td class="mechstatattack"></td>
+
+                                    <td><span class="glyphicon glyphicon-tower"></span></td>
+                                    <td class="mechstatdefense"></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="glyphicon glyphicon-record"></span></td>
+                                    <td class="mechstataccuracy"></td>
+
+                                    <td><span class="glyphicon glyphicon-hourglass"></span></td>
+                                    <td class="mechstatspeed"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Gear
+                        </div>
+                        <div class="panel-body">
+                            <p id="gear-weapon">Weapon: <span></span></p>
+                            <p id="gear-core">Core: <span></span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mech-status-formations" class="panel panel-default col-sm-4">
+                    <div class="panel-heading">
+                        Formation
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><a href="">Alpha</a></li>
+                            <li><a href="">Beta</a></li>
+                            <li><a href="">Gamma</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <a href="do_customize" class="btn btn-primary">Go back</a>
     </div>
 
@@ -236,7 +288,17 @@
                 var mech = mechs[$(this).attr('href')]
                 evt.preventDefault()
                 Engine.render('mech-status')
+
+                // Stats
                 $('#mech-status-page .page-header small').text(mech.name)
+                $('#mech-status-page .mechstatattack').text(mech.stats.attack)
+                $('#mech-status-page .mechstataccuracy').text(mech.stats.accuracy)
+                $('#mech-status-page .mechstatdefense').text(mech.stats.defense)
+                $('#mech-status-page .mechstatspeed').text(mech.stats.speed)
+
+                // Gear
+                $('#mech-status-page #gear-weapon span').text(mech.weapon.name)
+                $('#mech-status-page #gear-core span').text(mech.core)
             })
         }
     </script>
