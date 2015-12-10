@@ -67,6 +67,10 @@
             <li><a href="do_combat">Begin Combat</a></li>
             <li><a href="do_customize">Customize Mechs</a></li>
         </ul>
+
+        <div id="player-stats" class="well">
+            <p>Wins: <span id="player-stats-wins"></span></p>
+        </div>
     </div>
 
     <div id="mech-list-page" class="page">
@@ -183,6 +187,10 @@
                 Engine.do_action($(this).attr('href'))
             }
         })
+
+        update_player = function (player) {
+            $('#player-stats-wins').text(player.wins)
+        }
 
         animate_mech = function (mech, anim) {
             var mechid,

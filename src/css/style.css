@@ -25,6 +25,12 @@ body {
     background-color: rgba(255, 255, 255, 0.5);
 }
 
+#player-stats {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
 #combat-page {
     background-image: url("/images/background.png");
     background-repeat: no-repeat;

@@ -12,6 +12,8 @@ function PlayerData() {
         Engine.load_mech_data('mechs/mechtwo.json'),
         Engine.load_mech_data('mechs/mechone.json')
     ]
+
+    self.wins = 0
 }
 
 function CombatState() {
@@ -162,6 +164,7 @@ function CombatState() {
         dfd.then(function () {
             if (self.enemies.filter(function(x) {return x.hp_current > 0}).length == 0) {
                 console.log("The player wins!")
+                Engine.player.wins++
                 Engine.switch_state(MenuState)
             }
             else if (Engine.player.mechs.filter(function(x) {return x.hp_current > 0}).length == 0) {
@@ -188,6 +191,7 @@ function MenuState() {
 
     this.init = function () {
         Engine.render('menu')
+        update_player(Engine.player)
     }
 
     this.end = function () {
