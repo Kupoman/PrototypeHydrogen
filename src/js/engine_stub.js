@@ -4,7 +4,7 @@
 
 "use strict"
 
-function PlayerData() {
+function PlayerData(obj) {
     var self = this
 
     self.mechs = [
@@ -14,6 +14,8 @@ function PlayerData() {
     ]
 
     self.wins = 0
+
+    for (var prop in obj) this[prop] = obj[prop]
 }
 
 function CombatState() {
@@ -192,6 +194,10 @@ function MenuState() {
     this.init = function () {
         Engine.render('menu')
         update_player(Engine.player)
+        update_saves(Engine.get_saves())
+        //Engine.render('mech-list')
+        //update_mech_list(Engine.player.mechs)
+        //$('#mech-status-list li:first a').click()
     }
 
     this.end = function () {
@@ -221,11 +227,26 @@ var Engine = {
     state: {end: function(){} },
 
     init: function () {
+        var saves
+
         for (name in Engine.abilities) {
             Engine.load_ability_data(name)
         }
 
-        Engine.player = new PlayerData()
+        // Uncomment to clear saves
+        //localStorage.removeItem('saves')
+
+        saves = Engine.get_saves()
+        if (saves.length === 0) {
+            console.log('Creating new player')
+            Engine.player = new PlayerData()
+            Engine.set_saves([{'name': 'save', 'player': Engine.player}])
+        }
+        else {
+            console.log('Loading player from local storage')
+            Engine.player = new PlayerData(saves[0]['player'])
+        }
+
         console.log(Engine.player)
 
         Engine.switch_state(MenuState)
@@ -287,6 +308,20 @@ var Engine = {
         })
 
         return retval
+    },
+
+    get_saves: function () {
+        var saves
+
+        saves = JSON.parse(localStorage.getItem('saves'))
+        if (saves === null) {
+            saves = []
+        }
+        return saves
+    },
+
+    set_saves: function (saves) {
+        localStorage.setItem('saves', JSON.stringify(saves))
     },
 
     main: function () {
