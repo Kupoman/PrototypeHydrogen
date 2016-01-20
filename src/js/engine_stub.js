@@ -57,6 +57,10 @@ function CombatState() {
     self.end = function () {
         $('.enemypic').remove()
         $('.mechcard').remove()
+
+        for (var mech in Engine.player.mechs) {
+            mech.current_item_set = 'alpha'
+        }
     }
 
     self.do_attack = function () {
@@ -185,6 +189,14 @@ function CombatState() {
     }
 
     self.do_change_formation = function () {
+        console.log("Change places!")
+        Engine.player.mechs.forEach(function (mech) {
+            var formation = (mech.current_item_set == 'alpha') ? 'beta' : 'alpha'
+
+            console.log(mech.name + " changing to formation " + formation)
+            mech.current_item_set = formation
+            update_mech(mech)
+        })
     }
 
     self.do_run = function () {
