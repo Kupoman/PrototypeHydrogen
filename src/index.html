@@ -216,7 +216,8 @@
         }
 
         update_mech = function (mech) {
-            var mechid = '#mc' + mech.id
+            var mechid = '#mc' + mech.id,
+                weapon = mech.item_sets[mech.current_item_set].weapon
             $(mechid + ' .mechname').text(mech.name)
             if (mech.core === 'fire') {
                 $(mechid + ' .mechcore').addClass('glyphicon glyphicon-fire')
@@ -232,13 +233,13 @@
             }
             $(mechid + ' .mechhealth').css('width', (mech.hp_current * 100 / mech.hp_max) + '%')
             $(mechid + ' .mechhealth').text(mech.hp_current + '/' + mech.hp_max)
-            $(mechid + ' .mechweaponname').text(mech.weapon.name)
-            $(mechid + ' .mechweaponres').css('width', (mech.resource_current[mech.weapon.key] * 100 / mech.weapon.resource_max) + '%')
-            $(mechid + ' .mechweaponres').text(mech.resource_current[mech.weapon.key] + '/' + mech.weapon.resource_max)
-            $(mechid + ' .mechstatattack').text(mech.stats.attack + '(+' + mech.weapon.damage + ')')
-            $(mechid + ' .mechstataccuracy').text(mech.stats.accuracy + '(+' + mech.weapon.accuracy + ')')
-            $(mechid + ' .mechstatdefense').text(mech.stats.defense + '(+' + mech.weapon.defense + ')')
-            $(mechid + ' .mechstatspeed').text(mech.stats.speed + '(+' + mech.weapon.speed + ')')
+            $(mechid + ' .mechweaponname').text(weapon.name)
+            $(mechid + ' .mechweaponres').css('width', (mech.resource_current[weapon.key] * 100 / weapon.resource_max) + '%')
+            $(mechid + ' .mechweaponres').text(mech.resource_current[weapon.key] + '/' + weapon.resource_max)
+            $(mechid + ' .mechstatattack').text(mech.stats.attack + '(+' + weapon.damage + ')')
+            $(mechid + ' .mechstataccuracy').text(mech.stats.accuracy + '(+' + weapon.accuracy + ')')
+            $(mechid + ' .mechstatdefense').text(mech.stats.defense + '(+' + weapon.defense + ')')
+            $(mechid + ' .mechstatspeed').text(mech.stats.speed + '(+' + weapon.speed + ')')
 
             if (mech.hp_current <= 0) {
                 $(mechid).removeClass('panel-default')
@@ -296,7 +297,8 @@
             })
 
             $('#mech-status-list a').click(function (evt) {
-                var mech = mechs[$(this).attr('href')]
+                var mech = mechs[$(this).attr('href')],
+                    weapon = mech.item_sets[mech.current_item_set].weapon
                 evt.preventDefault()
                 Engine.render('mech-status')
 
@@ -308,7 +310,7 @@
                 $('#mech-status-page .mechstatspeed').text(mech.stats.speed)
 
                 // Gear
-                $('#mech-status-page #gear-weapon span').text(mech.weapon.name)
+                $('#mech-status-page #gear-weapon span').text(weapon.name)
                 $('#mech-status-page #gear-core span').text(mech.core)
             })
         }

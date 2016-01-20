@@ -2,9 +2,10 @@
     "name": "Enemy",
     "core": "lightning",
     "hp_max": 23,
-    "weapon": {
-        "name": "rifle",
-        "resource_max": 20
+    "item_sets": {
+        "alpha": {
+            "weapon": "rifle"
+        }
     },
     "stats": {
         "attack": 14,

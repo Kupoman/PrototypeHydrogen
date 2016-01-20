@@ -2,9 +2,13 @@
     "name": "Lynxshark",
     "core": "lightning",
     "hp_max": 25,
-    "weapon": {
-        "name": "bazooka",
-        "resource_max": 20
+    "item_sets": {
+        "alpha": {
+            "weapon": "bazooka"
+        },
+        "beta": {
+            "weapon": "rifle"
+        }
     },
     "stats": {
         "attack": 16,

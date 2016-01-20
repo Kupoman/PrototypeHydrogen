@@ -2,9 +2,13 @@
     "name": "Bobcatshark",
     "core": "fire",
     "hp_max": 31,
-    "weapon": {
-        "name": "rifle",
-        "resource_max": 20
+    "item_sets": {
+        "alpha": {
+            "weapon": "rifle"
+        },
+        "beta": {
+            "weapon": "bazooka"
+        }
     },
     "stats": {
         "attack": 12,

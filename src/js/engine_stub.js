@@ -68,11 +68,13 @@ function CombatState() {
         var combatants = []
         Engine.player.mechs.concat(self.enemies).forEach(function (combatant) {
             var init_roll,
-                init_mod
+                init_mod,
+                weapon
 
             if (combatant.hp_current != 0) {
                 init_roll = Math.floor((Math.random() * 21) + 1)
-                init_mod = (combatant.stats.speed + combatant.weapon.speed - 10) / 2
+                weapon = combatant.item_sets[combatant.current_item_set].weapon
+                init_mod = (combatant.stats.speed + weapon.speed - 10) / 2
                 combatant.initiative = init_roll + init_mod
                 combatants.push(combatant)
             }
@@ -81,14 +83,15 @@ function CombatState() {
         combatants.sort(function(a, b) {return a.initiative - b.initiative})
 
         begin_attack = function (combatant) {
-            var dfd = $.Deferred()
+            var dfd = $.Deferred(),
+                weapon = combatant.item_sets[combatant.current_item_set].weapon
 
             if (combatant.hp_current <= 0) {
                 dfd.resolve()
             }
 
-            if (combatant.resource_current[combatant.weapon.key]> 0) {
-                combatant.resource_current[combatant.weapon.key] -= 1;
+            if (combatant.resource_current[weapon.key]> 0) {
+                combatant.resource_current[weapon.key] -= 1;
                 animate_attack(combatant).then(dfd.resolve)
             }
             else {
@@ -120,15 +123,18 @@ function CombatState() {
                     attack_mod,
                     damage_roll,
                     damage_mod,
-                    damage
+                    damage,
+                    combatant_weapon = combatant.item_sets[combatant.current_item_set].weapon,
+                    target_weapon
 
                 target = targets[Math.floor(Math.random() * targets.length)]
+                target_weapon = target.item_sets[target.current_item_set].weapon
                 attack_roll = Math.floor((Math.random() * 21) + 1)
-                attack_mod = (combatant.stats.accuracy + combatant.weapon.accuracy - 10) / 2
-                if (attack_roll + attack_mod >= 10 + (target.stats.defense + target.weapon.defense - 10) / 2) {
+                attack_mod = (combatant.stats.accuracy + combatant_weapon.accuracy - 10) / 2
+                if (attack_roll + attack_mod >= 10 + (target.stats.defense + target_weapon.defense - 10) / 2) {
                     animate_mech(target, 'flash').then(function () {
                         damage_roll = Math.floor((Math.random() * 7) + 1)
-                        damage_mod = (combatant.stats.attack + combatant.weapon.damage - 10) / 2
+                        damage_mod = (combatant.stats.attack + combatant_weapon.damage - 10) / 2
                         damage = damage_roll + damage_mod
                         target.hp_current = Math.max(target.hp_current - damage, 0)
                         update_mech(target)
@@ -295,9 +301,15 @@ var Engine = {
                 Engine.last_mechid += 1
                 data.id = Engine.last_mechid
                 data.hp_current = data.hp_max
-                data.weapon = Engine.abilities[data.weapon.name]
                 data.resource_current = {}
-                data.resource_current[data.weapon.key] = data.weapon.resource_max
+                for (var key in data.item_sets) {
+                    var item_set
+                    item_set = data.item_sets[key]
+                    item_set.weapon = Engine.abilities[item_set.weapon]
+                    data.resource_current[item_set.weapon.key] = item_set.weapon.resource_max
+                }
+
+                data.current_item_set = 'alpha'
                 data.initiative = 0
                 retval = data
             },
