@@ -91,9 +91,6 @@
 
         <div class="navbar">
             <ul id="mech-status-formations" class="nav nav-tabs">
-                <li class="active"><a href="">Alpha</a></li>
-                <li><a href="">Beta</a></li>
-                <li><a href="">Gamma</a></li>
             </ul>
         </div>
         <div class="container-fluid">
@@ -342,6 +339,13 @@
                     weapon = mech.item_sets[mech.current_item_set].weapon
                 evt.preventDefault()
                 Engine.render('mech-status')
+
+                // Formations
+                $('#mech-status-formations').empty()
+                Object.keys(mech.item_sets).forEach(function (item_set) {
+                    $('#mech-status-formations').append('<li><a href="">' + item_set + '</a></li>')
+                })
+                $('#mech-status-formations li:first').addClass('active')
 
                 // Stats
                 $('#mech-status-page .page-header small').text(mech.name)
