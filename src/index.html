@@ -89,9 +89,27 @@
             <h1>Mech Status: <small id="mech-status-name"></small></h1>
         </div>
 
+        <div class="navbar">
+            <ul id="mech-status-formations" class="nav nav-tabs">
+                <li class="active"><a href="">Alpha</a></li>
+                <li><a href="">Beta</a></li>
+                <li><a href="">Gamma</a></li>
+            </ul>
+        </div>
         <div class="container-fluid">
             <div class="row">
-                <div id="mech-status-block" class="col-sm-8">
+                <div id="mech-status-itemdesc" class="col-sm-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Item Information
+                        </div>
+                        <div class="panel-body">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mech-status-block" class="col-sm-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             Stats
@@ -115,27 +133,50 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="mech-status-pitems" class="col-sm-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Gear
+                            Available Items
                         </div>
                         <div class="panel-body">
-                            <p id="gear-weapon">Weapon: <span></span></p>
-                            <p id="gear-core">Core: <span></span></p>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="">Nice Item</a></li>
+                                <li><a href="">Better Item</a><li>
+                                <li><a href="">Some Junk</a><li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-
-                <div id="mech-status-formations" class="panel panel-default col-sm-4">
-                    <div class="panel-heading">
-                        Formation
+                <div id="mech-status-mitems" class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Mech Items
+                        </div>
+                        <div class="panel-body">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="">Nice Item</a></li>
+                                <li><a href="">Better Item</a><li>
+                                <li><a href="">Some Junk</a><li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked">
-                            <li><a href="">Alpha</a></li>
-                            <li><a href="">Beta</a></li>
-                            <li><a href="">Gamma</a></li>
-                        </ul>
+                </div>
+                <div id="mech-status-mitemset" class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Current Item Set
+                        </div>
+                        <div class="panel-body">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="">Nice Item</a></li>
+                                <li><a href="">Better Item</a><li>
+                                <li><a href="">Some Junk</a><li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
