@@ -152,9 +152,6 @@
                         </div>
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked">
-                                <li><a href="">Nice Item</a></li>
-                                <li><a href="">Better Item</a><li>
-                                <li><a href="">Some Junk</a><li>
                             </ul>
                         </div>
                     </div>
@@ -374,6 +371,19 @@
                     display_description($(evt.target).parent(), item)
                 })
                 $('#mech-status-pitems li:first a').click()
+
+                // Gear - Mech Items
+                $('#mech-status-mitems ul').empty()
+                mech.items.forEach(function (item, idx) {
+                    $('#mech-status-mitems ul').append(
+                        '<li><a href="' + idx + '"">' + item.name + '</a></li>'
+                    )
+                })
+                $('#mech-status-mitems a').click(function (evt) {
+                    var item = mech.items[$(this).attr('href')]
+                    evt.preventDefault()
+                    display_description($(evt.target).parent(), item)
+                })
 
                 //$('#mech-status-page #gear-weapon span').text(weapon.name)
                 //$('#mech-status-page #gear-core span').text(mech.core)
