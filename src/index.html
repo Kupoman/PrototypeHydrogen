@@ -352,13 +352,29 @@
                 $('#mech-status-page .mechstatdefense').text(mech.stats.defense)
                 $('#mech-status-page .mechstatspeed').text(mech.stats.speed)
 
-                // Gear
+                // Gear - General
+                display_description = function (parent, item) {
+                    $('#mech-status-pitems li').removeClass('active')
+                    $('#mech-status-mitems li').removeClass('active')
+                    $('#mech-status-mitemset li').removeClass('active')
+                    parent.addClass('active')
+                    $('#mech-status-itemdesc p').text(item.name)
+                }
+
+                // Gear - Player Items
                 $('#mech-status-pitems ul').empty()
-                player.items.forEach(function (item) {
+                player.items.forEach(function (item, idx) {
                     $('#mech-status-pitems ul').append(
-                        '<li><a href="">' + item.name + '</a></li>'
+                        '<li><a href="' + idx + '"">' + item.name + '</a></li>'
                     )
                 })
+                $('#mech-status-pitems a').click(function (evt) {
+                    var item = player.items[$(this).attr('href')]
+                    evt.preventDefault()
+                    display_description($(evt.target).parent(), item)
+                })
+                $('#mech-status-pitems li:first a').click()
+
                 //$('#mech-status-page #gear-weapon span').text(weapon.name)
                 //$('#mech-status-page #gear-core span').text(mech.core)
             })
