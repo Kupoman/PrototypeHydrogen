@@ -163,9 +163,6 @@
                         </div>
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked">
-                                <li><a href="">Nice Item</a></li>
-                                <li><a href="">Better Item</a><li>
-                                <li><a href="">Some Junk</a><li>
                             </ul>
                         </div>
                     </div>
@@ -338,7 +335,9 @@
                 // Formations
                 $('#mech-status-formations').empty()
                 Object.keys(mech.item_sets).forEach(function (item_set) {
-                    $('#mech-status-formations').append('<li><a href="">' + item_set + '</a></li>')
+                    $('#mech-status-formations').append(
+                        '<li><a href="' + item_set + '">' + item_set + '</a></li>'
+                    )
                 })
                 $('#mech-status-formations li:first').addClass('active')
 
@@ -370,7 +369,6 @@
                     evt.preventDefault()
                     display_description($(evt.target).parent(), item)
                 })
-                $('#mech-status-pitems li:first a').click()
 
                 // Gear - Mech Items
                 $('#mech-status-mitems ul').empty()
@@ -384,6 +382,24 @@
                     evt.preventDefault()
                     display_description($(evt.target).parent(), item)
                 })
+
+                // Gear - Current Item Set
+                $('#mech-status-formations a').click(function (evt) {
+                    var item_set = mech.item_sets[$(this).attr('href')]
+                    evt.preventDefault()
+                    $(this).tab('show')
+                    $('#mech-status-pitems li:first a').click()
+                    $('#mech-status-mitemset ul').empty()
+                    $('#mech-status-mitemset ul').append(
+                        '<li><a href="">' + item_set['weapon'].name + '</a></li>' 
+                    )
+                    $('#mech-status-mitemset a').click(function (evt) {
+                        var item = item_set['weapon']
+                        evt.preventDefault()
+                        display_description($(evt.target).parent(), item)
+                    })
+                })
+                $('#mech-status-formations li:first a').click()
 
                 //$('#mech-status-page #gear-weapon span').text(weapon.name)
                 //$('#mech-status-page #gear-core span').text(mech.core)
