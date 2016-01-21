@@ -320,10 +320,12 @@ var Engine = {
                 data.id = Engine.last_mechid
                 data.hp_current = data.hp_max
                 data.resource_current = {}
+                data.items = []
                 for (var key in data.item_sets) {
                     var item_set
                     item_set = data.item_sets[key]
                     item_set.weapon = Engine.abilities[item_set.weapon]
+                    data.items.push(item_set.weapon)
                     data.resource_current[item_set.weapon.key] = item_set.weapon.resource_max
                 }
 
