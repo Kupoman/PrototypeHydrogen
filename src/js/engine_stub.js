@@ -13,6 +13,12 @@ function PlayerData(obj) {
         Engine.load_mech_data('mechs/mechone.json')
     ]
 
+    self.items = [
+        {'name': 'Axe'},
+        {'name': 'Crossbow'},
+        {'name': 'Railgun'}
+    ]
+
     self.wins = 0
 
     for (var prop in obj) this[prop] = obj[prop]
@@ -214,7 +220,7 @@ function MenuState() {
         update_player(Engine.player)
         update_saves(Engine.get_saves())
         //Engine.render('mech-list')
-        //update_mech_list(Engine.player.mechs)
+        //update_mech_list(Engine.player)
         //$('#mech-status-list li:first a').click()
     }
 
@@ -227,7 +233,7 @@ function MenuState() {
 
     this.do_customize = function () {
         Engine.render('mech-list')
-        update_mech_list(Engine.player.mechs)
+        update_mech_list(Engine.player)
     }
 
     this.do_button_main = function () {
